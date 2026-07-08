@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <title>Clay Slots</title>
+    <title>Magic Prompt</title>
 </head>
-<body class="bg-sky-100">
+<body class="bg-[#FDF6E3]">
     <div x-data="{
         activeTab: 'game',
         name: '',
@@ -29,7 +29,7 @@
             this.dashboardData = data.slice(1);
         },
         drawTopic() {
-            if (!this.name) { alert('Enter name!'); return; }
+            if (!this.name) { alert('Please enter your name, Artist!'); return; }
             let adjectives = this.allWords.filter(w => w[1] === 'Adjective').map(w => w[0]);
             let subjects = this.allWords.filter(w => w[1] === 'Subject').map(w => w[0]);
             this.isRolling = true;
@@ -50,24 +50,28 @@
             await fetch(this.apiUrl, { method: 'POST', body: JSON.stringify({ name: name, topic: topic }) });
             await this.fetchDashboard();
         }
-    }" class="min-h-screen p-4 flex items-center justify-center">
-        <div class="w-full max-w-md bg-white p-6 rounded-3xl shadow-2xl">
-            <h1 class="text-center font-black text-2xl text-sky-900 mb-6">Clay Slots</h1>
-            <div class="flex gap-2 mb-4">
-                <button @click="activeTab='game'" class="flex-1 py-2 bg-sky-500 text-white rounded-xl font-bold">Game</button>
-                <button @click="activeTab='dashboard'" class="flex-1 py-2 bg-gray-200 text-gray-700 rounded-xl font-bold">Dashboard</button>
+    }" class="min-h-screen p-4 flex items-center justify-center font-sans">
+        
+        <div class="w-full max-w-md bg-white p-6 rounded-[2rem] shadow-[8px_8px_0px_0px_rgba(234,179,8,0.3)] border-2 border-yellow-500">
+            <h1 class="text-center font-black text-3xl text-orange-600 mb-6 tracking-wide">Magic Prompt</h1>
+
+            <div class="flex gap-2 mb-6">
+                <button @click="activeTab='game'" class="flex-1 py-2 bg-orange-400 text-white rounded-xl font-bold hover:scale-105 transition-transform">Creator's Studio</button>
+                <button @click="activeTab='dashboard'" class="flex-1 py-2 bg-gray-200 text-gray-700 rounded-xl font-bold hover:scale-105 transition-transform">History</button>
             </div>
+
             <div x-show="activeTab=='game'">
-                <input x-model="name" type="text" placeholder="Name..." class="w-full p-4 border-2 rounded-2xl mb-4">
-                <button @click="drawTopic()" :disabled="isRolling" class="w-full bg-orange-400 p-4 rounded-2xl text-white font-black text-xl">Spin!</button>
-                <div class="mt-6 text-center text-2xl font-bold text-sky-800" x-text="adjective + ' ' + subject"></div>
+                <input x-model="name" type="text" placeholder="Artist Name..." class="w-full p-4 border-2 border-yellow-200 rounded-2xl mb-4 bg-yellow-50">
+                <button @click="drawTopic()" :disabled="isRolling" class="w-full bg-orange-500 p-4 rounded-2xl text-white font-black text-xl shadow-[0_4px_0_0_rgb(194,65,12)] hover:bg-orange-600 active:shadow-none active:translate-y-[4px]">Generate Topic</button>
+                <div class="mt-8 text-center text-3xl font-black text-orange-900 py-6 border-dashed border-2 border-orange-200 rounded-xl bg-orange-50/50" x-text="adjective + ' ' + subject"></div>
             </div>
+            
             <div x-show="activeTab=='dashboard'">
                 <div class="grid grid-cols-2 gap-3">
                     <template x-for="row in dashboardData.slice().reverse()">
-                        <div class="bg-sky-50 p-3 rounded-xl text-center">
-                            <p class="text-[10px] text-gray-400" x-text="row[0]"></p>
-                            <p class="font-bold text-sky-900 text-sm" x-text="row[1]"></p>
+                        <div class="bg-yellow-50 p-3 rounded-xl border border-yellow-200 text-center">
+                            <p class="text-[10px] text-orange-400 font-bold uppercase" x-text="row[0]"></p>
+                            <p class="font-bold text-orange-900 text-sm" x-text="row[1]"></p>
                         </div>
                     </template>
                 </div>
