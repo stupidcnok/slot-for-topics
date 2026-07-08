@@ -20,23 +20,25 @@
         apiUrl: 'https://script.google.com/macros/s/AKfycbzxS9b-L0YyxtK_7qNe6OpO0tHWspAgHjT-6axPjNwyBKEw2XRJ5w9nimMHg3EoRusNoQ/exec',
 
         async init() {
-            // Fetch Word Bank
             let res = await fetch(this.apiUrl + '?function=getWords');
             let data = await res.json();
-            this.allWords = data.slice(1); // Removes header row
+            this.allWords = data.slice(1);
             await this.fetchDashboard();
         },
 
         async fetchDashboard() {
             let res = await fetch(this.apiUrl);
             this.dashboardData = await res.json();
-            this.dashboardData.shift(); // Remove headers
+            this.dashboardData.shift(); 
+        },
+
+        toggleMode() {
+            this.mode = (this.mode == 'Kids') ? 'Adults' : 'Kids';
+            alert('Mode switched to: ' + this.mode);
         },
 
         drawTopic() {
             if (!this.name) { alert('Please enter your name!'); return; }
-            
-            // Filter using index 1 (Category) and index 2 (Type)
             let adjectives = this.allWords.filter(w => w[1] == this.mode && w[2] == 'Adjective').map(w => w[0]);
             let subjects = this.allWords.filter(w => w[1] == this.mode && w[2] == 'Subject').map(w => w[0]);
             
@@ -63,33 +65,30 @@
                 body: JSON.stringify({ name: name, topic: topic })
             });
             await this.fetchDashboard();
-            alert('Saved to Gallery!');
         }
     }" class="min-h-screen p-4 flex items-center justify-center">
+        
         <div class="w-full max-w-md bg-white p-6 rounded-3xl shadow-2xl">
+            <h1 @click="toggleMode()" class="text-center font-black text-2xl text-sky-900 mb-6 cursor-pointer">Clay Slots</h1>
+
             <div class="flex gap-2 mb-4">
                 <button @click="activeTab='game'" class="flex-1 py-2 bg-sky-500 text-white rounded-xl font-bold">Game</button>
                 <button @click="activeTab='dashboard'" class="flex-1 py-2 bg-gray-200 text-gray-700 rounded-xl font-bold">Dashboard</button>
             </div>
 
-            <!-- Game View -->
             <div x-show="activeTab=='game'">
-                <select x-model="mode" class="w-full p-2 mb-4 border rounded-xl">
-                    <option value="Kids">Kids Mode</option>
-                    <option value="Adults">Adults Mode</option>
-                </select>
                 <input x-model="name" type="text" placeholder="Enter your name..." class="w-full p-4 border-2 rounded-2xl mb-4">
-                <button @click="drawTopic()" :disabled="isRolling" class="w-full bg-orange-400 p-4 rounded-2xl text-white font-black text-xl">Spin!</button>
+                <button @click="drawTopic()" :disabled="isRolling" class="w-full bg-orange-400 p-4 rounded-2xl text-white font-black text-xl hover:bg-orange-500">Spin!</button>
                 <div class="mt-6 text-center text-2xl font-bold text-sky-800" x-text="adjective + ' ' + subject"></div>
             </div>
             
-            <!-- Dashboard View -->
             <div x-show="activeTab=='dashboard'">
                 <h1 class="text-xl font-bold text-center mb-4">Creations Gallery 🏆</h1>
-                <div class="space-y-2">
+                <div class="grid grid-cols-2 gap-3">
                     <template x-for="row in dashboardData.slice().reverse()">
-                        <div class="p-2 border-b text-sm">
-                            <span class="font-bold" x-text="row[0]"></span>: <span x-text="row[1]"></span>
+                        <div class="bg-sky-50 p-3 rounded-xl border border-sky-100 text-center">
+                            <p class="text-[10px] text-gray-400 uppercase" x-text="row[0]"></p>
+                            <p class="font-bold text-sky-900 text-sm" x-text="row[1]"></p>
                         </div>
                     </template>
                 </div>
