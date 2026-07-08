@@ -10,14 +10,13 @@
 <body class="bg-sky-100">
     <div x-data="{
         activeTab: 'game',
-        mode: 'Kids',
         name: '',
         adjective: '-----',
         subject: '-----',
         isRolling: false,
         dashboardData: [],
         allWords: [],
-        apiUrl: 'https://script.google.com/macros/s/AKfycbzxS9b-L0YyxtK_7qNe6OpO0tHWspAgHjT-6axPjNwyBKEw2XRJ5w9nimMHg3EoRusNoQ/exec',
+        apiUrl: 'YOUR_WEB_APP_URL_HERE',
 
         async init() {
             let res = await fetch(this.apiUrl + '?function=getWords');
@@ -32,17 +31,14 @@
             this.dashboardData.shift(); 
         },
 
-        toggleMode() {
-            this.mode = (this.mode == 'Kids') ? 'Adults' : 'Kids';
-            alert('Mode switched to: ' + this.mode);
-        },
-
         drawTopic() {
             if (!this.name) { alert('Please enter your name!'); return; }
-            let adjectives = this.allWords.filter(w => w[1] == this.mode && w[2] == 'Adjective').map(w => w[0]);
-            let subjects = this.allWords.filter(w => w[1] == this.mode && w[2] == 'Subject').map(w => w[0]);
             
-            if (adjectives.length === 0 || subjects.length === 0) { alert('Data loading error!'); return; }
+            // w[0] is the Word, w[1] is the Type
+            let adjectives = this.allWords.filter(w => w[1] == 'Adjective').map(w => w[0]);
+            let subjects = this.allWords.filter(w => w[1] == 'Subject').map(w => w[0]);
+            
+            if (adjectives.length === 0 || subjects.length === 0) { alert('Data loading error! Check if Col B has Adjective/Subject labels.'); return; }
 
             this.isRolling = true;
             let count = 0;
@@ -69,7 +65,7 @@
     }" class="min-h-screen p-4 flex items-center justify-center">
         
         <div class="w-full max-w-md bg-white p-6 rounded-3xl shadow-2xl">
-            <h1 @click="toggleMode()" class="text-center font-black text-2xl text-sky-900 mb-6 cursor-pointer">Clay Slots</h1>
+            <h1 class="text-center font-black text-2xl text-sky-900 mb-6">Clay Slots</h1>
 
             <div class="flex gap-2 mb-4">
                 <button @click="activeTab='game'" class="flex-1 py-2 bg-sky-500 text-white rounded-xl font-bold">Game</button>
@@ -78,7 +74,7 @@
 
             <div x-show="activeTab=='game'">
                 <input x-model="name" type="text" placeholder="Enter your name..." class="w-full p-4 border-2 rounded-2xl mb-4">
-                <button @click="drawTopic()" :disabled="isRolling" class="w-full bg-orange-400 p-4 rounded-2xl text-white font-black text-xl hover:bg-orange-500">Spin!</button>
+                <button @click="drawTopic()" :disabled="isRolling" class="w-full bg-orange-400 p-4 rounded-2xl text-white font-black text-xl">Spin!</button>
                 <div class="mt-6 text-center text-2xl font-bold text-sky-800" x-text="adjective + ' ' + subject"></div>
             </div>
             
