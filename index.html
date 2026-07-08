@@ -21,24 +21,27 @@
         async init() {
             let res = await fetch(this.apiUrl + '?function=getWords');
             let data = await res.json();
-            this.allWords = data.slice(1);
+            this.allWords = data.slice(1); // Skips the header row
             await this.fetchDashboard();
         },
 
         async fetchDashboard() {
             let res = await fetch(this.apiUrl);
-            this.dashboardData = await res.json();
-            this.dashboardData.shift(); 
+            let data = await res.json();
+            this.dashboardData = data.slice(1); // Skips header
         },
 
         drawTopic() {
             if (!this.name) { alert('Please enter your name!'); return; }
             
-            // w[0] is the Word, w[1] is the Type
-            let adjectives = this.allWords.filter(w => w[1] == 'Adjective').map(w => w[0]);
-            let subjects = this.allWords.filter(w => w[1] == 'Subject').map(w => w[0]);
+            // Filter: Column A (w[0]) is the word, Column B (w[1]) is the type
+            let adjectives = this.allWords.filter(w => w[1] === 'Adjective').map(w => w[0]);
+            let subjects = this.allWords.filter(w => w[1] === 'Subject').map(w => w[0]);
             
-            if (adjectives.length === 0 || subjects.length === 0) { alert('Data loading error! Check if Col B has Adjective/Subject labels.'); return; }
+            if (adjectives.length === 0 || subjects.length === 0) { 
+                alert('Data error! Check if Column B contains "Adjective" and "Subject" labels.'); 
+                return; 
+            }
 
             this.isRolling = true;
             let count = 0;
